@@ -1,65 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Astute Screen Pop</title>
-
-    <!-- Webex CC Desktop SDK -->
-    <script src="https://unpkg.com/@wxcc-desktop/sdk@latest/dist/wxcc-desktop-sdk.js"></script>
+    <title>Launching Emplifi...</title>
 
     <script>
-        let sdkLoaded = false;
-
-        function safeInit() {
-            // Prevent double-initialization
-            if (sdkLoaded) return;
-            sdkLoaded = true;
-
-            console.log("⏳ Delayed SDK init triggered");
-
-            WxccDesktop.init()
-                .then((sdk) => {
-                    console.log("✅ Webex CC SDK Loaded");
-                    registerEvents(sdk);
-                })
-                .catch((err) => {
-                    console.error("❌ SDK init failed:", err);
-                });
-        }
-
-        function registerEvents(sdk) {
-            const EVENTS = [
-                "interaction:connected",
-                "wxcc:interaction:connected",
-                "task:connected",
-                "task:accepted",
-                "task:assigned"
-            ];
-
-            EVENTS.forEach(evt => {
-                sdk.subscribe(evt, (data) => {
-                    console.log("📞 Event Received:", evt, data);
-                    tryPop(data);
-                });
-            });
-        }
-
-        function tryPop(event) {
-            const ani = event?.data?.ani || event?.data?.fromAddress || "";
-            const email =
-                event?.data?.agentEmail ||
-                event?.data?.userEmail ||
-                event?.data?.agent?.email ||
-                "";
+        window.onload = function () {
+            const params = new URLSearchParams(window.location.search);
+            const ani = params.get("ani");
+            const email = params.get("email");
 
             if (!ani || !email) {
-                console.log("⏳ Waiting for ANI + Agent Email...");
+                document.body.innerHTML = "Missing ANI or Email";
                 return;
             }
 
-            launchAstute(ani, email);
-        }
+            // Build POST payload
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "https://USECASEPOP054A.myastutesolutions.com/api/screen";
+            form.target = "_self";
 
-        function launchAstute(ani, email) {
             const payload = {
                 secret_key: "TrainSecret@a29m!",
                 company_id: "SYS",
@@ -71,11 +31,6 @@
                     user_code_identity: email
                 }
             };
-
-            const form = document.createElement("form");
-            form.method = "POST";
-            form.action = "https://USECASEPOP054A.myastutesolutions.com/api/screen";
-            form.target = "_blank";
 
             Object.keys(payload).forEach(key => {
                 if (typeof payload[key] === "object") {
@@ -97,19 +52,11 @@
 
             document.body.appendChild(form);
             form.submit();
-            form.remove();
-
-            console.log("🚀 Astute Screen Pop Launched");
-        }
-
-        // SAFETY DELAY: Initialize only after desktop is fully loaded
-        window.onload = () => {
-            console.log("⌛ Waiting 2500ms before SDK init...");
-            setTimeout(safeInit, 2500);
         };
     </script>
 </head>
 
 <body>
+    <h3>Launching Emplifi...</h3>
 </body>
 </html>
