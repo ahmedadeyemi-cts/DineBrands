@@ -3,68 +3,65 @@
 <head>
     <title>Astute Screen Pop</title>
 
-    <!-- Webex Contact Center Desktop SDK -->
+    <!-- Webex CC Desktop SDK -->
     <script src="https://unpkg.com/@wxcc-desktop/sdk@latest/dist/wxcc-desktop-sdk.js"></script>
 
     <script>
-        let sdk;
+        let sdkLoaded = false;
 
-        async function initSDK() {
-            try {
-                sdk = await WxccDesktop.init();
-                console.log("✅ Webex CC SDK Loaded");
+        function safeInit() {
+            // Prevent double-initialization
+            if (sdkLoaded) return;
+            sdkLoaded = true;
 
-                registerEvents();
-            } catch (e) {
-                console.error("❌ SDK initialization failed:", e);
-            }
+            console.log("⏳ Delayed SDK init triggered");
+
+            WxccDesktop.init()
+                .then((sdk) => {
+                    console.log("✅ Webex CC SDK Loaded");
+                    registerEvents(sdk);
+                })
+                .catch((err) => {
+                    console.error("❌ SDK init failed:", err);
+                });
         }
 
-        function registerEvents() {
-            const ALL_EVENTS = [
+        function registerEvents(sdk) {
+            const EVENTS = [
                 "interaction:connected",
                 "wxcc:interaction:connected",
                 "task:connected",
-                "task:assigned",
                 "task:accepted",
-                "task:wrapup"
+                "task:assigned"
             ];
 
-            ALL_EVENTS.forEach(evt => {
+            EVENTS.forEach(evt => {
                 sdk.subscribe(evt, (data) => {
-                    console.log(`📞 Event received: ${evt}`, data);
+                    console.log("📞 Event Received:", evt, data);
                     tryPop(data);
                 });
             });
         }
 
         function tryPop(event) {
-            const ani =
-                event?.data?.fromAddress ||
-                event?.data?.ani ||
-                event?.ani ||
-                "";
-
-            const agentEmail =
+            const ani = event?.data?.ani || event?.data?.fromAddress || "";
+            const email =
                 event?.data?.agentEmail ||
                 event?.data?.userEmail ||
                 event?.data?.agent?.email ||
                 "";
 
-            console.log("ANI:", ani);
-            console.log("Agent Email:", agentEmail);
-
-            if (!ani || !agentEmail) {
-                console.log("Not enough info to pop yet.");
+            if (!ani || !email) {
+                console.log("⏳ Waiting for ANI + Agent Email...");
                 return;
             }
 
-            launchAstute(ani, agentEmail);
+            launchAstute(ani, email);
         }
 
         function launchAstute(ani, email) {
             const payload = {
-                secret_key: "TrainSecret@a29f!",
+                secret_key: "TrainSecret@a29m!",
                 company_id: "SYS",
                 b05_code: "800",
                 phone: ani,
@@ -80,20 +77,20 @@
             form.action = "https://USECASEPOP054A.myastutesolutions.com/api/screen";
             form.target = "_blank";
 
-            Object.keys(payload).forEach(k => {
-                if (typeof payload[k] === "object") {
-                    Object.keys(payload[k]).forEach(subK => {
+            Object.keys(payload).forEach(key => {
+                if (typeof payload[key] === "object") {
+                    Object.keys(payload[key]).forEach(sub => {
                         const input = document.createElement("input");
                         input.type = "hidden";
-                        input.name = `user_code_field[${subK}]`;
-                        input.value = payload[k][subK];
+                        input.name = `user_code_field[${sub}]`;
+                        input.value = payload[key][sub];
                         form.appendChild(input);
                     });
                 } else {
                     const input = document.createElement("input");
                     input.type = "hidden";
-                    input.name = k;
-                    input.value = payload[k];
+                    input.name = key;
+                    input.value = payload[key];
                     form.appendChild(input);
                 }
             });
@@ -105,12 +102,14 @@
             console.log("🚀 Astute Screen Pop Launched");
         }
 
-        window.onload = initSDK;
+        // SAFETY DELAY: Initialize only after desktop is fully loaded
+        window.onload = () => {
+            console.log("⌛ Waiting 2500ms before SDK init...");
+            setTimeout(safeInit, 2500);
+        };
     </script>
 </head>
 
 <body>
-    <h2>Astute Screen Pop Widget</h2>
-    <p>Waiting for an inbound call...</p>
 </body>
 </html>
