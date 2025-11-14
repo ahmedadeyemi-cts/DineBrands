@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Astute Screen Pop</title>
+
+    <!-- Webex Contact Center Desktop SDK -->
+    <script src="https://unpkg.com/@wxcc-desktop/sdk@latest/dist/wxcc-desktop-sdk.js"></script>
+
+    <script>
+        let sdk;
+
+        async function initSDK() {
+            try {
+                sdk = await WxccDesktop.init();
+                console.log("✅ Webex CC SDK Loaded");
+
+                registerEvents();
+            } catch (e) {
+                console.error("❌ SDK initialization failed:", e);
+            }
+        }
+
+        function registerEvents() {
+            const ALL_EVENTS = [
+                "interaction:connected",
+                "wxcc:interaction:connected",
+                "task:connected",
+                "task:assigned",
+                "task:accepted",
+                "task:wrapup"
+            ];
+
+            ALL_EVENTS.forEach(evt => {
+                sdk.subscribe(evt, (data) => {
+                    console.log(`📞 Event received: ${evt}`, data);
+                    tryPop(data);
+                });
+            });
+        }
+
+        function tryPop(event) {
+            const ani =
+                event?.data?.fromAddress ||
+                event?.data?.ani ||
+                event?.ani ||
+                "";
+
+            const agentEmail =
+                event?.data?.agentEmail ||
+                event?.data?.userEmail ||
+                event?.data?.agent?.email ||
+                "";
+
+            console.log("ANI:", ani);
+            console.log("Agent Email:", agentEmail);
+
+            if (!ani || !agentEmail) {
+                console.log("Not enough info to pop yet.");
+                return;
+            }
+
+            launchAstute(ani, agentEmail);
+        }
+
+        function launchAstute(ani, email) {
+            const payload = {
+                secret_key: "TrainSecret@a29f!",
+                company_id: "SYS",
+                b05_code: "800",
+                phone: ani,
+                c06_code: "0000",
+                user_code_field: {
+                    uxx_code: "u03_code",
+                    user_code_identity: email
+                }
+            };
+
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "https://USECASEPOP054A.myastutesolutions.com/api/screen";
+            form.target = "_blank";
+
+            Object.keys(payload).forEach(k => {
+                if (typeof payload[k] === "object") {
+                    Object.keys(payload[k]).forEach(subK => {
+                        const input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = `user_code_field[${subK}]`;
+                        input.value = payload[k][subK];
+                        form.appendChild(input);
+                    });
+                } else {
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = k;
+                    input.value = payload[k];
+                    form.appendChild(input);
+                }
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+            form.remove();
+
+            console.log("🚀 Astute Screen Pop Launched");
+        }
+
+        window.onload = initSDK;
+    </script>
+</head>
+
+<body>
+    <h2>Astute Screen Pop Widget</h2>
+    <p>Waiting for an inbound call...</p>
+</body>
+</html>
