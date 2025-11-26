@@ -18,7 +18,7 @@ async function runScreenPop() {
 
     // 2. Build HTTP POST Body
     const payload = {
-        secret_key: "TrainSecret@a29m!",
+        secret_key: "ProdSecret@a29m!",
         company_id: "SYS",
         b05_code: "800",
         phone: phone,
@@ -36,7 +36,7 @@ async function runScreenPop() {
 
     // 4. Execute POST call
     try {
-        const response = await fetch("https://USECASEPOP054A.myastutesolutions.com/api/screen", {
+        const response = await fetch("https://USECASEPOP054D.myastutesolutions.com/api/screen", {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json"
