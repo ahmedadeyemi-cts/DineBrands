@@ -4,9 +4,48 @@
 <meta charset="UTF-8">
 <title>Dine Brands CasePop</title>
 
+<!-- Global Dark Mode + Light Mode Styles -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Dark Mode */
+    body.dark {
+        background-color: #121212;
+        color: #f5f5f5;
+    }
+
+    /* Spinner Animation */
+    .spinner {
+        margin: 20px auto;
+        width: 50px;
+        height: 50px;
+        border: 6px solid #ddd;
+        border-top-color: #0078ff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+
 <script>
+let dinePop = null;
+
+// Detect system dark mode and apply it
+function applyDarkMode(win) {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (prefersDark) win.document.body.classList.add("dark");
+}
+
 async function runScreenPop() {
-    // 1. Read URL parameters
+
     const url = new URL(window.location.href);
     const phone = url.searchParams.get("phone");
     const email = url.searchParams.get("email");
@@ -16,7 +55,6 @@ async function runScreenPop() {
         return;
     }
 
-    // 2. Build HTTP POST Body
     const payload = {
         secret_key: "ProdSecret@a29m!",
         company_id: "SYS",
@@ -29,40 +67,167 @@ async function runScreenPop() {
         }
     };
 
-    // 3. Open new tab immediately (browsers block popups unless triggered)
-    const popup = window.open("", "_blank");
+    // Open or reuse popup with fixed name
+    dinePop = window.open("about:blank", "DinePop", "width=900,height=700");
+    dinePop.document.open();
 
-    popup.document.write("<h2>Loading screen pop...</h2>");
+    // ADD POPUP TITLE HERE
+    dinePop.document.write(`
+        <html>
+        <head>
+            <title>Dine Pop</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                    margin-top: 40px;
+                    transition: background-color 0.3s, color 0.3s;
+                }
+                body.dark {
+                    background-color: #121212;
+                    color: #f5f5f5;
+                }
+                .spinner {
+                    margin: 20px auto;
+                    width: 55px;
+                    height: 55px;
+                    border: 6px solid #ddd;
+                    border-top-color: #0078ff;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin { to { transform: rotate(360deg); } }
+            </style>
+        </head>
+        <body>
+            <img src="https://cdn.cookielaw.org/logos/de9c8170-4f8f-4c2c-bad0-0878e7e40cf0/b5704931-48da-424f-8f39-bd0abe0aca9a/e8944123-9f9c-4145-81b7-2dbb7ee9eb99/Dine_Hirez.png"
+                 alt="Dine Brands Logo"
+                 style="width:200px; margin-bottom:20px;">
+            <h2>Loading screen pop...</h2>
+            <div class="spinner"></div>
 
-    // 4. Execute POST call
+            <p style="margin-top:40px; font-size:12px; opacity:0.7;">
+                Created and Maintained by Ahmed Adeyemi, US Signal, 2025
+            </p>
+        </body>
+        </html>
+    `);
+
+    dinePop.document.close();
+    applyDarkMode(dinePop);
+
     try {
         const response = await fetch("https://USECASEPOP054D.myastutesolutions.com/api/screen", {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
 
-        let text = await response.text();
+        const text = await response.text();
 
-        // 5. Pretty response in popup window
-        popup.document.body.innerHTML = `
-            <h2>Dine Brands Screen Pop Response</h2>
-            <pre>${text.replace(/</g,"&lt;")}</pre>
-        `;
+        // Render final response with styled UI
+        dinePop.document.open();
+        dinePop.document.write(`
+            <html>
+            <head>
+                <title>Dine Pop</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 30px;
+                        transition: background-color 0.3s, color 0.3s;
+                    }
+                    body.dark {
+                        background-color: #121212;
+                        color: #f5f5f5;
+                    }
+                    .card {
+                        max-width: 850px;
+                        margin: auto;
+                        padding: 20px;
+                        border-radius: 12px;
+                        background: #ffffff;
+                        color: #000;
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                    }
+                    body.dark .card {
+                        background: #1f1f1f;
+                        color: #f5f5f5;
+                        box-shadow: 0 4px 20px rgba(255,255,255,0.1);
+                    }
+                    pre {
+                        white-space: pre-wrap;
+                        word-break: break-word;
+                        background: #ececec;
+                        padding: 15px;
+                        border-radius: 8px;
+                        font-family: Consolas, monospace;
+                    }
+                    body.dark pre {
+                        background: #333;
+                    }
+                </style>
+            </head>
+
+            <body>
+                <div class="card">
+                    <div style="text-align:center;">
+                        <img src="https://cdn.cookielaw.org/logos/de9c8170-4f8f-4c2c-bad0-0878e7e40cf0/b5704931-48da-424f-8f39-bd0abe0aca9a/e8944123-9f9c-4145-81b7-2dbb7ee9eb99/Dine_Hirez.png"
+                             style="width:200px; margin-bottom:20px;">
+                        <h2>Dine Brands Screen Pop Response</h2>
+                    </div>
+
+                    <pre>${text.replace(/</g, "&lt;")}</pre>
+                </div>
+
+                <p style="text-align:center; margin-top:25px; font-size:12px; opacity:0.7;">
+                    Created and Maintained by Ahmed Adeyemi, US Signal, 2025
+                </p>
+            </body>
+            </html>
+        `);
+
+        dinePop.document.close();
+        applyDarkMode(dinePop);
 
     } catch (err) {
-        popup.document.body.innerHTML = `
-            <h2>Request Failed</h2>
-            <pre>${err}</pre>
-        `;
+        dinePop.document.open();
+        dinePop.document.write(`
+            <html>
+            <head><title>Dine Pop</title></head>
+            <body>
+                <h2>Request Failed</h2>
+                <pre>${err}</pre>
+
+                <p style="margin-top:40px; font-size:12px; opacity:0.7;">
+                    Created and Maintained by Ahmed Adeyemi, US Signal, 2025
+                </p>
+            </body>
+            </html>
+        `);
+
+        dinePop.document.close();
+        applyDarkMode(dinePop);
     }
 }
 </script>
 </head>
 
 <body onload="runScreenPop()">
-<h3>Processing screen pop...</h3>
+    <img src="https://cdn.cookielaw.org/logos/de9c8170-4f8f-4c2c-bad0-0878e7e40cf0/b5704931-48da-424f-8f39-bd0abe0aca9a/e8944123-9f9c-4145-81b7-2dbb7ee9eb99/Dine_Hirez.png"
+         style="width:200px; margin-bottom:20px;">
+
+    <h3>Processing screen pop...</h3>
+
+    <p style="margin-top:40px; font-size:12px; opacity:0.7;">
+        Created and Maintained by Ahmed Adeyemi, US Signal, 2025
+    </p>
+
+    <script>
+        // Main page dark mode
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            document.body.classList.add("dark");
+        }
+    </script>
 </body>
 </html>
