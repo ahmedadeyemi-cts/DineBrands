@@ -30,12 +30,13 @@ async function runScreenPop() {
         }
     };
 
-    // ⭐ Reuse popup window if it exists and is not closed
-    if (!popup || popup.closed) {
-        popup = window.open("", "casepopWindow");
-    }
+    // ⭐ The key to reusing the same tab
+    popup = window.open("about:blank", "casepopWindow", "popup=true");
 
-    popup.document.body.innerHTML = "<h2>Loading screen pop...</h2>";
+    // Make sure the document exists before writing
+    popup.document.open();
+    popup.document.write("<h2>Loading screen pop...</h2>");
+    popup.document.close();
 
     try {
         const response = await fetch("https://USECASEPOP054A.myastutesolutions.com/api/screen", {
@@ -48,16 +49,20 @@ async function runScreenPop() {
 
         const text = await response.text();
 
-        popup.document.body.innerHTML = `
+        popup.document.open();
+        popup.document.write(`
             <h2>Dine Brands Screen Pop Response</h2>
             <pre>${text.replace(/</g,"&lt;")}</pre>
-        `;
+        `);
+        popup.document.close();
 
     } catch (err) {
-        popup.document.body.innerHTML = `
+        popup.document.open();
+        popup.document.write(`
             <h2>Request Failed</h2>
             <pre>${err}</pre>
-        `;
+        `);
+        popup.document.close();
     }
 }
 </script>
@@ -67,4 +72,4 @@ async function runScreenPop() {
 <h3>Processing screen pop...</h3>
 </body>
 </html>
-//Created by Ahmed Adeyemi, us Signal.
+//Created by Ahmed Adeyemi, US Signal.
