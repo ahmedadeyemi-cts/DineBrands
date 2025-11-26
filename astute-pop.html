@@ -5,8 +5,10 @@
 <title>Dine Brands CasePop</title>
 
 <script>
+// Global reference to popup window
+let popup = null;
+
 async function runScreenPop() {
-    // 1. Read URL parameters
     const url = new URL(window.location.href);
     const phone = url.searchParams.get("phone");
     const email = url.searchParams.get("email");
@@ -16,7 +18,6 @@ async function runScreenPop() {
         return;
     }
 
-    // 2. Build HTTP POST Body
     const payload = {
         secret_key: "TrainSecret@a29m!",
         company_id: "SYS",
@@ -29,12 +30,13 @@ async function runScreenPop() {
         }
     };
 
-    // 3. Open new tab immediately (browsers block popups unless triggered)
-    const popup = window.open("", "_blank");
+    // ⭐ Reuse popup window if it exists and is not closed
+    if (!popup || popup.closed) {
+        popup = window.open("", "casepopWindow");
+    }
 
-    popup.document.write("<h2>Loading screen pop...</h2>");
+    popup.document.body.innerHTML = "<h2>Loading screen pop...</h2>";
 
-    // 4. Execute POST call
     try {
         const response = await fetch("https://USECASEPOP054A.myastutesolutions.com/api/screen", {
             method: "POST",
@@ -44,9 +46,8 @@ async function runScreenPop() {
             body: JSON.stringify(payload)
         });
 
-        let text = await response.text();
+        const text = await response.text();
 
-        // 5. Pretty response in popup window
         popup.document.body.innerHTML = `
             <h2>Dine Brands Screen Pop Response</h2>
             <pre>${text.replace(/</g,"&lt;")}</pre>
@@ -66,3 +67,4 @@ async function runScreenPop() {
 <h3>Processing screen pop...</h3>
 </body>
 </html>
+//Created by Ahmed Adeyemi, us Signal.
