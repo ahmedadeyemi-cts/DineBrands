@@ -30,12 +30,22 @@ async function runScreenPop() {
         }
     };
 
-    // ⭐ This is the key: give the popup a fixed name
+    // Open or reuse popup by fixed name
     dinePop = window.open("about:blank", "DinePop", "width=900,height=700");
 
-    // Write loading message
+    // Loading screen with logo
     dinePop.document.open();
-    dinePop.document.write("<h2>Loading screen pop...</h2>");
+    dinePop.document.write(`
+        <div style="text-align:center; margin-top:30px; font-family:Arial, sans-serif;">
+            <img src="https://cdn.cookielaw.org/logos/de9c8170-4f8f-4c2c-bad0-0878e7e40cf0/b5704931-48da-424f-8f39-bd0abe0aca9a/e8944123-9f9c-4145-81b7-2dbb7ee9eb99/Dine_Hirez.png"
+                 alt="Dine Brands Logo"
+                 style="width:200px; margin-bottom:20px;">
+            <h2>Loading screen pop...</h2>
+            <p style="margin-top:40px; font-size:12px; color:#555;">
+                Created and Maintained by Ahmed Adeyemi, US Signal, 2025
+            </p>
+        </div>
+    `);
     dinePop.document.close();
 
     try {
@@ -47,18 +57,44 @@ async function runScreenPop() {
 
         const text = await response.text();
 
+        // Final response screen with logo
         dinePop.document.open();
         dinePop.document.write(`
-            <h2>Dine Brands Screen Pop Response</h2>
-            <pre>${text.replace(/</g, "&lt;")}</pre>
+            <div style="text-align:center; margin-top:30px; font-family:Arial, sans-serif;">
+                <img src="https://cdn.cookielaw.org/logos/de9c8170-4f8f-4c2c-bad0-0878e7e40cf0/b5704931-48da-424f-8f39-bd0abe0aca9a/e8944123-9f9c-4145-81b7-2dbb7ee9eb99/Dine_Hirez.png"
+                     alt="Dine Brands Logo"
+                     style="width:200px; margin-bottom:20px;">
+                <h2>Dine Brands Screen Pop Response</h2>
+            </div>
+
+            <pre style="white-space:pre-wrap; word-break:break-word; padding:20px; background:#f3f3f3; border-radius:8px; font-family:Consolas, monospace;">
+${text.replace(/</g, "&lt;")}
+            </pre>
+
+            <div style="text-align:center; margin-top:40px; font-size:12px; color:#555; font-family:Arial, sans-serif;">
+                Created and Maintained by Ahmed Adeyemi, US Signal, 2025
+            </div>
         `);
         dinePop.document.close();
 
     } catch (err) {
+        // Failure screen with logo
         dinePop.document.open();
         dinePop.document.write(`
-            <h2>Request Failed</h2>
-            <pre>${err}</pre>
+            <div style="text-align:center; margin-top:30px; font-family:Arial, sans-serif;">
+                <img src="https://cdn.cookielaw.org/logos/de9c8170-4f8f-4c2c-bad0-0878e7e40cf0/b5704931-48da-424f-8f39-bd0abe0aca9a/e8944123-9f9c-4145-81b7-2dbb7ee9eb99/Dine_Hirez.png"
+                     alt="Dine Brands Logo"
+                     style="width:200px; margin-bottom:20px;">
+                <h2>Request Failed</h2>
+            </div>
+
+            <pre style="white-space:pre-wrap; word-break:break-word; padding:20px; background:#fee; border-radius:8px; font-family:Consolas, monospace;">
+${err}
+            </pre>
+
+            <div style="text-align:center; margin-top:40px; font-size:12px; color:#555;">
+                Created and Maintained by Ahmed Adeyemi, US Signal, 2025
+            </div>
         `);
         dinePop.document.close();
     }
@@ -66,9 +102,15 @@ async function runScreenPop() {
 </script>
 </head>
 
-<body onload="runScreenPop()">
-<h3>Processing screen pop...</h3>
+<body onload="runScreenPop()" style="text-align:center; font-family:Arial, sans-serif; margin-top:50px;">
+    <img src="https://cdn.cookielaw.org/logos/de9c8170-4f8f-4c2c-bad0-0878e7e40cf0/b5704931-48da-424f-8f39-bd0abe0aca9a/e8944123-9f9c-4145-81b7-2dbb7ee9eb99/Dine_Hirez.png"
+         alt="Dine Brands Logo"
+         style="width:200px; margin-bottom:20px;">
+
+    <h3>Processing screen pop...</h3>
+
+    <p style="margin-top:40px; font-size:12px; color:#555;">
+        Created and Maintained by Ahmed Adeyemi, US Signal, 2025
+    </p>
 </body>
 </html>
-
-//Created and maintained by Ahmed Adeyemi, US Signal.
